@@ -11,6 +11,8 @@ using System.Data.SqlClient;
 using System.Timers;
 using System.IO;
 using ClosedXML.Excel;
+using System.Configuration;
+
 
 namespace Export_Data
 {
@@ -18,7 +20,8 @@ namespace Export_Data
     {
         private System.Timers.Timer exportTimer;
 
-        private string connectionString = "Data Source=10.4.17.184;Initial Catalog=DEMO;User ID=tk2;Password=123456;Integrated Security=False;";
+        private string connectionString = ConfigurationManager.ConnectionStrings["MyConnectionString"].ConnectionString;
+
         private string exportFolder = @"D:\Desktop\Practice\";
         private DataTable currentData;
         public Form1()
