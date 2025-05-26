@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Timers;
 using System.IO;
+using ClosedXML.Excel;
 
 namespace Export_Data
 {
@@ -36,6 +37,31 @@ namespace Export_Data
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+        private void ExportDataToExcel(DataTable dt)
+        {
+            try
+            {
+                // Đếm số file đã export trước đó
+                string[] existingFiles = Directory.GetFiles(exportFolder, "Export*.xlsx");
+                int nextIndex = existingFiles.Length + 1;
+
+                string fileName = $"Export{nextIndex}.xlsx";
+                string filePath = Path.Combine(exportFolder, fileName);
+
+                // Tạo workbook Excel và thêm dữ liệu
+                using (var workbook = new XLWorkbook())
+                {
+                    workbook.Worksheets.Add(dt, "Data");
+                    workbook.SaveAs(filePath);
+                }
+
+                MessageBox.Show($"Export thành công: {fileName}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi xuất file Excel: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -64,8 +90,8 @@ namespace Export_Data
         {
             if (currentData != null && currentData.Rows.Count > 0)
             {
-                ExportDataToTxt(currentData);
-                MessageBox.Show("Đã xuất dữ liệu ra file .txt thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ExportDataToExcel(currentData);
+                MessageBox.Show("Đã xuất dữ liệu ra file .xlsx thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
@@ -75,7 +101,7 @@ namespace Export_Data
         private void ExportTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             DataTable data = FetchDataFromSql();
-            ExportDataToTxt(data);
+            ExportDataToExcel(data);
         }
         private DataTable FetchDataFromSql()
         {
