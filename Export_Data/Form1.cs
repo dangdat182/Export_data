@@ -24,7 +24,7 @@ namespace Export_Data
         {
             InitializeComponent();
             exportTimer = new System.Timers.Timer();
-            exportTimer.Interval = 60 * 60 * 1000; // 1 giờ = 3600000 ms
+            exportTimer.Interval = 10 * 1000;
             exportTimer.Elapsed += ExportTimer_Elapsed;
             exportTimer.Start();
         }
@@ -105,7 +105,11 @@ namespace Export_Data
         {
             try
             {
-                string fileName = $"Export_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+                // Đếm số file đã export trước đó
+                string[] existingFiles = Directory.GetFiles(exportFolder, "Export*.txt");
+                int nextIndex = existingFiles.Length + 1;
+
+                string fileName = $"Export{nextIndex}.txt";
                 string filePath = Path.Combine(exportFolder, fileName);
                 StringBuilder sb = new StringBuilder();
 
@@ -127,12 +131,15 @@ namespace Export_Data
                 }
 
                 File.WriteAllText(filePath, sb.ToString());
+                MessageBox.Show($"Export thành công: {fileName}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi khi xuất file: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void button4_Click(object sender, EventArgs e)
         {
