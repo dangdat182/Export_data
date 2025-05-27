@@ -28,7 +28,7 @@ namespace Export_Data
         {
             InitializeComponent();
             exportTimer = new System.Timers.Timer();
-            exportTimer.Interval = 10 * 1000;
+            exportTimer.Interval = 10 * 60 * 1000;
             exportTimer.Elapsed += ExportTimer_Elapsed;
             exportTimer.Start();
         }
@@ -45,14 +45,14 @@ namespace Export_Data
         {
             try
             {
-                // Đếm số file đã export trước đó
+          
                 string[] existingFiles = Directory.GetFiles(exportFolder, "Export*.xlsx");
                 int nextIndex = existingFiles.Length + 1;
 
                 string fileName = $"Export{nextIndex}.xlsx";
                 string filePath = Path.Combine(exportFolder, fileName);
 
-                // Tạo workbook Excel và thêm dữ liệu
+            
                 using (var workbook = new XLWorkbook())
                 {
                     workbook.Worksheets.Add(dt, "Data");
@@ -160,6 +160,7 @@ namespace Export_Data
                 }
 
                 File.WriteAllText(filePath, sb.ToString());
+
                 MessageBox.Show($"Export thành công: {fileName}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }
